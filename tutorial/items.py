@@ -25,4 +25,5 @@ class BookItem(scrapy.Item):
     book_class =Field()
     book_img = Field()
     intro_info = Field()
+    author = Field()
     pass

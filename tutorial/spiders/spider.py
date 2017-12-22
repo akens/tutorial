@@ -27,7 +27,7 @@ class ListSpider(CrawlSpider):
     startRead = u'开始阅读'
     rules = (
         Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/wapsort/1-\d+/',), restrict_xpaths=('//a[text()="%s"]' %(nextpage2)))),
-        Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/info/\d+/',),restrict_xpaths=('//div[@class="block_img"]')),follow=True),
+        Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/info/\d+/',),restrict_xpaths=('//div[@class="block_img"]')),callback='parse_book',follow=True),
         Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+/',), restrict_xpaths=('//a[text()="%s"]' % (startRead))),follow=True),
         Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+-\d+/',), restrict_xpaths=('//a[text()="%s"]' % (nextpage))),follow=True),
         Rule(
@@ -46,6 +46,7 @@ class ListSpider(CrawlSpider):
         intro_info = response.selector.xpath('//div[@class="intro_info"]')[0].extract().decode('utf-8')
         dr = re.compile(r'<[^>]+>', re.S)
         item["intro_info"] = dr.sub('', intro_info)
+        item["author"] = response.selector.xpath('//div[@class="block_txt"]/p')[1].xpath('text()')[0].extract().decode('utf-8').replace('\n','').replace('\r','').replace('\t','').replace('作者：','')
         yield item
     # 解析内容函数
     def parse_content(self, response):
