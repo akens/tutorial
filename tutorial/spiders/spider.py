@@ -31,7 +31,7 @@ class ListSpider(CrawlSpider):
         Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+/',), restrict_xpaths=('//a[text()="%s"]' % (startRead))),follow=True),
         Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+-\d+/',), restrict_xpaths=('//a[text()="%s"]' % (nextpage))),follow=True),
         Rule(
-            SgmlLinkExtractor(allow=(r'http://m.88dushu.com/book/\d+-\d+/',), restrict_xpaths=('//ul[@class="chapter"]')),
+            SgmlLinkExtractor(allow=(r'http://m.88dushu.com/book/\d+-\d+/',), restrict_xpaths=('//ul[@class="chapter" and not(@id)]')),
             callback='parse_content',follow=False),
     )
 
