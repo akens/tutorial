@@ -48,8 +48,8 @@ class TutorialPipeline(object):
 
     def _insert_book(self, tb, item):
         item['book_img'] = self.save_img(item)
-        tb.execute("insert into book (book_name,book_key,book_class,book_img,intro_info) values (%s,%s,%s,%s,%s)", \
-                   (item["book_name"],item["book_key"],item["book_class"],item["book_img"],item["intro_info"]))
+        tb.execute("insert into book (book_name,book_key,book_class,book_img,intro_info,author) values (%s,%s,%s,%s,%s,%s)", \
+                   (item["book_name"],item["book_key"],item["book_class"],item["book_img"],item["intro_info"],item["author"]))
         log.msg("Item data in db: %s" % item, level=log.DEBUG)
 
     def _insert_chapter(self, tb, item):
