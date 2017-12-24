@@ -48,13 +48,13 @@ class TutorialPipeline(object):
 
     def _insert_book(self, tb, item):
         item['book_img'] = self.save_img(item)
-        tb.execute("insert into book (book_name,book_key,book_class,book_img,intro_info,author) values (%s,%s,%s,%s,%s,%s)", \
-                   (item["book_name"],item["book_key"],item["book_class"],item["book_img"],item["intro_info"],item["author"]))
+        tb.execute("insert into book (book_name,book_key,book_class,book_img,intro_info,author,chapter_table) values (%s,%s,%s,%s,%s,%s,%s)", \
+                   (item["book_name"],item["book_key"],item["book_class"],item["book_img"],item["intro_info"],item["author"],item["chapter_table"]))
         log.msg("Item data in db: %s" % item, level=log.DEBUG)
 
     def _insert_chapter(self, tb, item):
 
-        tb.execute("insert into chapter (chapter_name, chapter_content, pre_page,book_key,page_key) values (%s, %s, %s,%s,%s)", \
+        tb.execute("insert into chapter_1 (chapter_name, chapter_content, pre_page,book_key,page_key) values (%s, %s, %s,%s,%s)", \
                    (item["chapter_name"], item["chapter_content"], item["pre_page"], item["book_key"],item["page_key"]))
         log.msg("Item data in db: %s" % item, level=log.DEBUG)
 

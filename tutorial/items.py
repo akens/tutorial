@@ -17,6 +17,7 @@ class TutorialItem(scrapy.Item):
     pre_page =Field()
     page_key = Field()
     book_key = Field()
+    chapter_table = Field()
     pass
 
 class BookItem(scrapy.Item):

@@ -26,7 +26,7 @@ class ListSpider(CrawlSpider):
     nextpage2 = u'下页'
     startRead = u'开始阅读'
     rules = (
-        Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/wapsort/1-\d+/',), restrict_xpaths=('//a[text()="%s"]' %(nextpage2)))),
+        Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/wapsort/1-[1-2]?[0-9]?/',), restrict_xpaths=('//a[text()="%s"]' %(nextpage2)))),
         Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/info/\d+/',),restrict_xpaths=('//div[@class="block_img"]')),callback='parse_book',follow=True),
         Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+/',), restrict_xpaths=('//a[text()="%s"]' % (startRead))),follow=True),
         Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+-\d+/',), restrict_xpaths=('//a[text()="%s"]' % (nextpage))),follow=True),
@@ -38,6 +38,7 @@ class ListSpider(CrawlSpider):
     #解析小说详情
     def parse_book(self,response):
         item = BookItem()
+        item["chapter_table"] = 'chapter_1'
         img = response.selector.xpath('//div[@class="block_img"]/img')[0]
         item["book_img"] = img.xpath('@src')[0].extract().decode('utf-8')
         item["book_name"] = img.xpath('@alt')[0].extract().decode('utf-8')
