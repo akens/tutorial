@@ -34,27 +34,30 @@ class TutorialPipeline(object):
                                             )
 
     def process_item(self, item, spider):
-        if isinstance(item,TutorialItem):
-            query = self.dbpool.runInteraction(self._insert_chapter, item)
-            query.addErrback(self.handle_error)
-            pass
-        else:
-            query = self.dbpool.runInteraction(self._insert_book, item)
-            query.addErrback(self.handle_error)
-            pass
+        try:
+            if isinstance(item,TutorialItem):
+                query = self.dbpool.runInteraction(self._insert_chapter, item)
+                query.addErrback(self.handle_error)
+                pass
+            else:
+                query = self.dbpool.runInteraction(self._insert_book, item)
+                query.addErrback(self.handle_error)
+                pass
+        except:
+            print("保存出错")
         return item
 
 
 
     def _insert_book(self, tb, item):
         item['book_img'] = self.save_img(item)
-        tb.execute("insert into book (book_name,book_key,book_class,book_img,intro_info,author,chapter_table) values (%s,%s,%s,%s,%s,%s,%s)", \
+        tb.execute("insert ignore into book (book_name,book_key,book_class,book_img,intro_info,author,chapter_table) values (%s,%s,%s,%s,%s,%s,%s)", \
                    (item["book_name"],item["book_key"],item["book_class"],item["book_img"],item["intro_info"],item["author"],item["chapter_table"]))
         log.msg("Item data in db: %s" % item, level=log.DEBUG)
 
     def _insert_chapter(self, tb, item):
 
-        tb.execute("insert into chapter_1 (chapter_name, chapter_content, pre_page,book_key,page_key) values (%s, %s, %s,%s,%s)", \
+        tb.execute("insert ignore into "+item["chapter_table"]+" (chapter_name, chapter_content, pre_page,book_key,page_key) values (%s, %s, %s,%s,%s)", \
                    (item["chapter_name"], item["chapter_content"], item["pre_page"], item["book_key"],item["page_key"]))
         log.msg("Item data in db: %s" % item, level=log.DEBUG)
 
@@ -73,9 +76,10 @@ class TutorialPipeline(object):
             os.mkdir(dir_path)
         if len(item['book_img']) > 0:
                 file_name = item['book_key']
-                file_path = '{}//{}'.format(dir_path, file_name)
-                if os.path.exists(file_path) or os.path.exists(file_name):
-                    file_name = file_name + random.randint(10000,999999)
+                file_path = '{}//{}.jpg'.format(dir_path, file_name)
+                if os.path.isfile(file_path):
+                    return file_name
+                    #file_name = '00000'+file_name + random.randint(10000,999999)
                 with open('{}//{}.jpg'.format(dir_path, file_name), 'wb') as f:
                     req = requests.get(item['book_img'], headers=header)
                     f.write(req.content)
