@@ -27,7 +27,7 @@ class ListSpider(CrawlSpider):
     startRead = u'开始阅读'
     rules = (
         Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/wapsort/1-[0-1][0-9]/',), restrict_xpaths=('//a[text()="%s"]' %(nextpage2)))),
-        Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/info/\d+/',),restrict_xpaths=('//div[@class="block_img"]')),callback='parse_book',follow=True),
+        Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/info/\d+/',),restrict_xpaths=('//div[@class="block_img"]')),callback='parse_book',follow=False),
         Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+/',), restrict_xpaths=('//a[text()="%s"]' % (startRead))),follow=True),
         Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+-\d+/',), restrict_xpaths=('//a[text()="%s"]' % (nextpage))),follow=True),
         Rule(
@@ -175,7 +175,7 @@ class ListSpider(CrawlSpider):
         self.start_urls = [self.urls[self.idx]]
         self.rules = (
             Rule(SgmlLinkExtractor(allow=(self.allows[self.idx],), restrict_xpaths=('//a[text()="%s"]' %(self.nextpage2)))),
-            Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/info/\d+/',),restrict_xpaths=('//div[@class="block_img"]')),callback='parse_book',follow=True),
+            Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/info/\d+/',),restrict_xpaths=('//div[@class="block_img"]')),callback='parse_book',follow=False),
             Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+/',), restrict_xpaths=('//a[text()="%s"]' % (self.startRead))),follow=True),
             Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+-\d+/',), restrict_xpaths=('//a[text()="%s"]' % (self.nextpage))),follow=True),
             Rule(

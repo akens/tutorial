@@ -18,6 +18,8 @@ from twisted.enterprise import adbapi
 
 from tutorial.items import TutorialItem
 from tutorial.settings import IMAGES_STORE
+from scrapy.xlib.pydispatch import dispatcher
+from scrapy import signals
 
 
 class TutorialPipeline(object):
@@ -32,6 +34,14 @@ class TutorialPipeline(object):
                                             charset="utf8",
                                             use_unicode=False
                                             )
+        dispatcher.connect(self.spider_closed, signals.spider_closed)
+
+    def spider_closed(self,spider):
+        try:
+            query = self.dbpool.runInteraction(self._update_book, spider.book_key)
+            query.addErrback(self.handle_error)
+        except:
+            print("更新出错")
 
     def process_item(self, item, spider):
         try:
@@ -39,6 +49,8 @@ class TutorialPipeline(object):
                 query = self.dbpool.runInteraction(self._insert_chapter, item)
                 query.addErrback(self.handle_error)
                 pass
+            elif isinstance(item,str):
+                print(item)
             else:
                 query = self.dbpool.runInteraction(self._insert_book, item)
                 query.addErrback(self.handle_error)
@@ -47,7 +59,11 @@ class TutorialPipeline(object):
             print("保存出错")
         return item
 
-
+    def _update_book(self,tb,item):
+        tb.execute(
+            "update book set inited = 1 WHERE book_key = %s", \
+            (item))
+        log.msg("Item data in db: %s" % item, level=log.DEBUG)
 
     def _insert_book(self, tb, item):
         item['book_img'] = self.save_img(item)
