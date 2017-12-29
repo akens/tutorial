@@ -71,10 +71,18 @@ class TutorialPipeline(object):
                    (item["book_name"],item["book_key"],item["book_class"],item["book_img"],item["intro_info"],item["author"],item["chapter_table"]))
         log.msg("Item data in db: %s" % item, level=log.DEBUG)
 
-    def _insert_chapter(self, tb, item):
+    def _save_content(self,name,content):
+        dir_path = '{}'.format('F:\\reader\\chapter')
+        if not os.path.exists(dir_path):
+            os.mkdir(dir_path)
+        with open('{}//{}.txt'.format(dir_path, name), 'wb') as f:
+            f.write(content)
+            f.close()
 
-        tb.execute("insert ignore into "+item["chapter_table"]+" (chapter_name, chapter_content, pre_page,book_key,page_key) values (%s, %s, %s,%s,%s)", \
-                   (item["chapter_name"], item["chapter_content"], item["pre_page"], item["book_key"],item["page_key"]))
+    def _insert_chapter(self, tb, item):
+        self._save_content(item["book_key"]+"-"+item["page_key"],item["chapter_content"])
+        tb.execute("insert ignore into "+item["chapter_table"]+" (chapter_name, pre_page,book_key,page_key) values (%s, %s, %s,%s)", \
+                   (item["chapter_name"], item["pre_page"], item["book_key"],item["page_key"]))
         log.msg("Item data in db: %s" % item, level=log.DEBUG)
 
     def handle_error(self, e):

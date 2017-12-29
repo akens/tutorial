@@ -22,7 +22,7 @@ if __name__ == "__main__":
         for row in results:
             book_key = row[0]
             chapter_table = row[1]
-            if process_list.__len__() < 50:
+            if process_list.__len__() <50:
                 process = Process(target=run_spider, args=(book_key,chapter_table,))
                 process_list.append(process)
                 process.start()
