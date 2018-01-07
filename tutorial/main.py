@@ -10,7 +10,7 @@ def run_cmd(idx):
 
 if __name__ == "__main__":
     process_list = []
-    for i in range(44):
+    for i in range(22):
        process = Process(target=run_cmd,args=(i,))
        process_list.append(process)
        process.start()

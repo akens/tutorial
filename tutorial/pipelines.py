@@ -105,6 +105,6 @@ class TutorialPipeline(object):
                     return file_name
                     #file_name = '00000'+file_name + random.randint(10000,999999)
                 with open('{}//{}.jpg'.format(dir_path, file_name), 'wb') as f:
-                    req = requests.get(item['book_img'], headers=header)
+                    req = requests.get(item['book_img'], headers=header,verify=False)
                     f.write(req.content)
                 return file_name
