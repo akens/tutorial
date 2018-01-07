@@ -148,11 +148,17 @@ class ListSpider(CrawlSpider):
                    "chapter_11",
                    "chapter_11"]
 
-    def __init__(self,process_idx, *args, **kwargs):
+    def __init__(self,process_idx,book_class, *args, **kwargs):
         self.idx = int(process_idx)
-        self.start_urls = [self.urls[self.idx]]
+        self.book_class=book_class
+        if self.idx > 0:
+            self.start_urls = ["http://m.88dushu.com/wapsort/" + book_class + "-" + process_idx + "0/"]
+            allow_url=r'http://m.88dushu.com/wapsort/'+book_class+r'-'+process_idx+r'[1-9]/'
+        else:
+            self.start_urls = ["http://m.88dushu.com/wapsort/" + book_class + "-1/"]
+            allow_url = r'http://m.88dushu.com/wapsort/' + book_class + r'-[1-9]/'
         self.rules = (
-            Rule(SgmlLinkExtractor(allow=(self.allows[self.idx],), restrict_xpaths=('//a[text()="%s"]' %(self.nextpage2)))),
+            Rule(SgmlLinkExtractor(allow=(allow_url,), restrict_xpaths=('//a[text()="%s"]' %(self.nextpage2)))),
             Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/info/\d+/',),restrict_xpaths=('//div[@class="block_img"]')),callback='parse_book',follow=False),
             Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+/',), restrict_xpaths=('//a[text()="%s"]' % (self.startRead))),follow=True),
             Rule(SgmlLinkExtractor(allow=(r'http://m.88dushu.com/mulu/\d+-\d+/',), restrict_xpaths=('//a[text()="%s"]' % (self.nextpage))),follow=True),
@@ -165,11 +171,11 @@ class ListSpider(CrawlSpider):
     def parse_book(self,response):
         try:
             item = BookItem()
-            item["chapter_table"] = self.table_names[self.idx]
+            item["chapter_table"] = "chapter_"+str((self.idx/6)+1)
             img = response.selector.xpath('//div[@class="block_img"]/img')[0]
             item["book_img"] = img.xpath('@src')[0].extract().decode('utf-8')
             item["book_name"] = img.xpath('@alt')[0].extract().decode('utf-8')
-            item["book_class"] = '3'
+            item["book_class"] = self.book_class
             item["book_key"] = response.url[response.url.index('info/')+5:len(response.url)-1]
             intro_info = response.selector.xpath('//div[@class="intro_info"]')[0].extract().decode('utf-8')
             dr = re.compile(r'<[^>]+>', re.S)

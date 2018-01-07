@@ -5,12 +5,12 @@ from scrapy import cmdline
 
 def run_cmd(idx):
     process_idx = str(idx)
-    cmdline.execute(("scrapy crawl tutorial -s JOBDIR=jobdir"+process_idx+" -a process_idx="+process_idx).split())
+    cmdline.execute(("scrapy crawl tutorial -s JOBDIR=jobdir"+process_idx+" -a book_class=3 -a process_idx="+process_idx).split())
 
 
 if __name__ == "__main__":
     process_list = []
-    for i in range(22):
+    for i in range(1):
        process = Process(target=run_cmd,args=(i,))
        process_list.append(process)
        process.start()
