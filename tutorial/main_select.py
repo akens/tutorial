@@ -15,7 +15,6 @@ def run_spider(book_key,chapter_name):
     cmdline.execute(("scrapy crawl chapter -a book_key="+book_key+" -a ct="+chapter_name).split())
 
 if __name__ == "__main__":
-    process_list = []
     db = MySQLdb.connect("172.16.1.221", "root", "123456", "reader")
     cursor = db.cursor()
     sql = "SELECT book_key,page_key,chapter_content FROM chapter_1"
@@ -43,12 +42,3 @@ if __name__ == "__main__":
         print "Error: unable to fecth data"
 
     db.close()
-
-    e = process_list.__len__()
-    while True:
-        for th in process_list:
-            if not th.is_alive():
-                e -= 1
-        if e <= 0:
-            break
-        time.sleep(1)
